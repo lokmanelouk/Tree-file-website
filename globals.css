@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+/* 1. Import fonts the standard way for Vite */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+/* 2. Configure your theme using the new @theme block */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  
+  /* You can also define your custom colors here if needed */
+  --color-brand: #3b82f6;
+}
+
+/* 3. Base styles */
+@layer base {
+  body {
+    @apply font-sans antialiased bg-white dark:bg-slate-950 text-slate-900 dark:text-white;
+  }
+}
