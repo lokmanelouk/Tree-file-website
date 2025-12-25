@@ -31,4 +31,4 @@ It serves as the central hub for users to download the app, read the documentati
 ### ⚖️ License
 
 This website content is Open Source under the **MIT License**.
-Copyright © 2025 Lokman.
+Copyright © 2025 LokmanX22.
