@@ -1,20 +1,34 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Tree File - Official Website 🌐
 
-# Run and deploy your AI Studio app
+This is the official marketing and documentation website for the **Tree File Desktop Application**.
 
-This contains everything you need to run your app locally.
+It serves as the central hub for users to download the app, read the documentation, and view the changelog.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1e0ibbfW2sVo8dI-7-XNOid6UrhGuAnnY
+## 🚀 Visit the Website
 
-## Run Locally
+**Live Link:** [https://tree-file-website.vercel.app](https://tree-file-website.vercel.app)
 
-**Prerequisites:**  Node.js
+*(Click the link above to view the live site)*
 
+---
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 📄 Website Sections
+
+*   **Home:** Overview of features, screenshots, and visual showcase.
+*   **Download Center:** Direct download links for the latest Windows and Mac versions (synced with GitHub Releases).
+*   **Documentation:** Comprehensive guides, installation fixes, and "How-to" recipes.
+*   **Changelog:** A timeline history of all app updates and improvements.
+
+---
+
+## 🔗 Related Links
+
+*   **Main App Repository:** [github.com/lokmanelouk/Tree-file](https://github.com/lokmanelouk/Tree-file)
+*   **Report an Issue:** [github.com/lokmanelouk/Tree-file/issues](https://github.com/lokmanelouk/Tree-file/issues)
+
+---
+
+### ⚖️ License
+
+This website content is Open Source under the **MIT License**.
+Copyright © 2025 Lokman.
