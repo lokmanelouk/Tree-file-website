@@ -149,7 +149,7 @@ export const DocChat: React.FC<{ context: string }> = ({ context }) => {
 
       const result = await ai.models.generateContent({
         // FIX 2: Use stable model
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.5-flash-lite',
         contents: prompt,
       });
 
