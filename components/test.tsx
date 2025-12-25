@@ -118,7 +118,14 @@ export const DocChat: React.FC<{ context: string }> = ({ context }) => {
   const quickReplies = [
     { text: "Fix macOS 'Damaged' error", icon: <ShieldAlert size={14} /> },
     { text: "Large file limits?", icon: <Zap size={14} /> },
+    { text: "Gemini API setup", icon: <Sparkles size={14} /> }
   ];
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isTyping]);
 
   const streamText = async (fullText: string) => {
     let currentText = '';
@@ -142,12 +149,6 @@ export const DocChat: React.FC<{ context: string }> = ({ context }) => {
     }
   };
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages, isTyping]);
-
   const handleSend = async (customMessage?: string) => {
     const textToSend = customMessage || input;
     if (!textToSend.trim() || isTyping) return;
@@ -157,47 +158,30 @@ export const DocChat: React.FC<{ context: string }> = ({ context }) => {
     setIsTyping(true);
 
     try {
-      // FIX 1: Use VITE variable
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-      if (!apiKey) throw new Error("API Key not found");
-
-      const ai = new GoogleGenAI({ apiKey });
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const prompt = `
-        SYSTEM: You are the "Tree File" Documentation Expert.
+        You are the "Tree File" Documentation Expert. 
         CONTEXT: ${context}
-        
         QUESTION: ${textToSend}
-        
-        STRICT RULES:
-        1. ⚡ **BE CONCISE:** Give a direct answer in 1-2 sentences. Do NOT ramble or give long explanations unless explicitly asked.
-        2. 🎨 **USE ICONS:** Start every key point with a relevant emoji (e.g., 📂, 🚀, ⚠️, 💡) to make it visual.
-        3. 🔍 **DETAILS ON DEMAND:** Only provide code blocks or deep technical details if the user asks for "how to", "code", or "steps". Otherwise, keep it high-level.
-        4. 🛠️ **FORMAT:** Use Markdown. Bold key terms.
-        
-        Example of a good answer:
-        "🚀 Yes!
-        Tree File supports CSV files natively. 
-        📂 It automatically switches to "Table View" for performance if the file has over 300 rows."
+        RULES: Use info from context. Be technical. Use markdown code blocks for terminal commands. Focus on file types, security fixes, and performance. Keep responses concise and professional.
       `;
 
       const result = await ai.models.generateContent({
-        // FIX 2: Use stable model
-        model: 'gemini-2.5-flash-lite',
+        model: 'gemini-3-flash-preview',
         contents: prompt,
       });
 
       const fullResponse = result.text || "I'm sorry, I couldn't generate a response.";
       setIsTyping(false); // Stop loader before streaming
       await streamText(fullResponse);
+      
     } catch (error) {
-      console.error(error);
+      setIsTyping(false);
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: "Error: Failed to reach AI engine. Check connection or API Key.",
+        content: "Error: Failed to reach AI engine. Check connection or verify your API key configuration.",
         isError: true 
       }]);
-    } finally {
-      setIsTyping(false);
     }
   };
 
@@ -332,8 +316,8 @@ export const DocChat: React.FC<{ context: string }> = ({ context }) => {
           <motion.button
             key="toggle-button"
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 100 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
             whileHover={{ scale: 1.1, rotate: 5, y: -4 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
