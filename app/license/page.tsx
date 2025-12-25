@@ -6,7 +6,7 @@ import { FileCode, Terminal } from 'lucide-react';
 export default function LicensePage() {
   const mitText = `MIT License
 
-Copyright (c) 2024 Tree File Project
+Copyright (c) 2025 Tree File Project
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

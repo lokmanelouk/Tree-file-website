@@ -40,17 +40,26 @@ export const AIDemo: React.FC = () => {
     if (!customQuery) setQuery(activeQuery);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      // FIX 1: Use the correct VITE env variable
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) throw new Error("API Key not configured");
+
+      const ai = new GoogleGenAI({ apiKey });
       const prompt = `Given this JSON data: ${sampleJson}\n\nAnswer the following question in a short, professional sentence: ${activeQuery}`;
       
       const result = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        // FIX 2: Use the stable model
+        model: 'gemini-1.5-flash',
         contents: prompt,
       });
       
-      setResponse(result.text || "I couldn't analyze that data. Try another query.");
+      // FIX 3: Safe response handling
+      const text = result.text || "No analysis available.";
+      setResponse(text);
+
     } catch (error) {
-      setResponse("AI insights require an API key. In the desktop app, this runs locally.");
+      console.error("AI Error:", error);
+      setResponse("AI insights require a configured API key. In the desktop app, this runs locally.");
     } finally {
       setIsLoading(false);
     }
@@ -121,7 +130,7 @@ export const AIDemo: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-2xl font-black text-slate-900 dark:text-white">Data Analyst</h3>
-                  <p className="text-sm text-slate-500">Semantic parsing via Gemini 3</p>
+                  <p className="text-sm text-slate-500">Semantic parsing via Gemini 1.5</p>
                 </div>
               </div>
 

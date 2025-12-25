@@ -17,7 +17,7 @@ const faqs = [
   },
   {
     question: "Does it support huge files?",
-    answer: "Yes, it is built with an optimized Electron core capable of handling JSON and CSV files up to 500MB without performance degradation, using virtualization for the tree views."
+    answer: "Yes, it is built with an optimized Electron core capable of handling JSON and CSV files up to 50MB without performance degradation, using virtualization for the tree views."
   }
 ];
 

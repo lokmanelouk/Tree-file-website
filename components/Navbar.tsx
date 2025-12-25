@@ -6,6 +6,12 @@ import { ThemeToggle } from './ThemeToggle';
 import { Tooltip } from './Tooltip';
 
 export const Navbar: React.FC = () => {
+
+  const LOGOS = {
+    light: '/dark-logo.png', // The logo to show when the theme is light
+    dark: '/logo.png',      // The logo to show when the theme is dark
+  };
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
@@ -81,18 +87,30 @@ export const Navbar: React.FC = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <motion.div className="relative" layoutId="app-logo-container">
-              <motion.div 
+            {/* REPLACED ICON BOX WITH IMAGES */}
+            <motion.div 
                 layoutId="app-logo-box"
-                className="w-9 h-9 flex items-center justify-center bg-slate-950 dark:bg-white rounded-xl shadow-lg border border-white/10 dark:border-slate-200/20 group-hover:shadow-teal-500/20 transition-all"
+                className="w-10 h-10 flex items-center justify-center transition-all"
                 whileHover={{ rotate: 12 }}
               >
-                <FolderTree className="text-white dark:text-slate-950" size={18} strokeWidth={2.5} />
+                {/* Light Mode Logo */}
+                <img 
+                  src={LOGOS.light} 
+                  alt="Tree File Logo" 
+                  className="w-full h-full rounded-md object-contain block dark:hidden drop-shadow-md" 
+                />
+                
+                {/* Dark Mode Logo */}
+                <img 
+                  src={LOGOS.dark} 
+                  alt="Tree File Logo" 
+                  className="w-full h-full rounded-md object-contain hidden dark:block drop-shadow-md" 
+                />
               </motion.div>
-            </motion.div>
             <div className="flex flex-col">
               <motion.span 
-                layoutId="app-logo-text"
+                // Remove or Comment out the line below:
+                // layoutId="app-logo-text" 
                 className="text-xl md:text-2xl font-black tracking-tighter text-slate-900 dark:text-white leading-none"
               >
                 Tree<span className="text-teal-500">File</span>

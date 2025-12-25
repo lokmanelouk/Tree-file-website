@@ -7,7 +7,7 @@ const showcaseFeatures = [
     id: 0,
     title: "AI Analyst",
     tagline: "Chat with your data using Gemini.",
-    description: "Ask natural language questions to extract insights from massive files without manual searching or complex regex. Tree File uses Gemini 3 Pro to understand your structures.",
+    description: "Ask natural language questions to extract insights from massive files without manual searching or complex regex. Tree File uses AI Assistant Pro to understand your structures.",
     image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1200",
     icon: <Sparkles size={24} />,
     bulletPoints: ["Semantic Search", "Complex Query Handling", "Data Schema Inference"]

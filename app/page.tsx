@@ -22,6 +22,7 @@ import { AIDemo } from '@/components/AIDemo';
 import { FAQ } from '@/components/FAQ';
 import { HowToUse } from '@/components/HowToUse';
 import { Hero } from '@/components/Hero';
+import { Footer } from '@/components/Footer';
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -158,41 +159,7 @@ export default function LandingPage() {
           <BottomCTA />
         </motion.section>
       </main>
-
-      <footer className="py-24 px-6 border-t border-slate-200 dark:border-white/5 bg-white/40 dark:bg-slate-950/50 backdrop-blur-md relative z-20">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
-          <div className="flex flex-col items-center md:items-start text-center md:text-left">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="bg-teal-500 p-2 rounded-xl shadow-xl shadow-teal-500/20">
-                <FolderTree className="text-white" size={24} />
-              </div>
-              <span className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white">Tree File</span>
-            </div>
-            <p className="text-slate-500 dark:text-slate-400 max-w-sm text-sm leading-relaxed mb-8 font-medium">
-              The professional data viewer that treats your complex structures with the respect they deserve. Local-first, privacy-driven.
-            </p>
-            <div className="flex items-center gap-3">
-              <Tooltip content="GitHub" side="top">
-                <a href="https://github.com/lokmanelouk/Tree-file" target="_blank" className="p-3 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-transparent text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-teal-500/50 transition-all shadow-sm"><Github size={20} /></a>
-              </Tooltip>
-              <Tooltip content="Twitter" side="top">
-                <a href="#" className="p-3 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-transparent text-slate-400 hover:text-[#1DA1F2] hover:border-[#1DA1F2]/50 transition-all shadow-sm"><Twitter size={20} fill="currentColor" /></a>
-              </Tooltip>
-              <Tooltip content="LinkedIn" side="top">
-                <a href="#" className="p-3 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-transparent text-slate-400 hover:text-[#0A66C2] hover:border-[#0A66C2]/50 transition-all shadow-sm"><Linkedin size={20} fill="currentColor" /></a>
-              </Tooltip>
-            </div>
-          </div>
-          
-          <div className="flex flex-col md:items-end text-sm text-slate-500 space-y-4">
-            <p className="font-black text-slate-900 dark:text-white mb-2 uppercase tracking-widest text-[10px]">Resources</p>
-            <a href="/docs" className="hover:text-teal-600 dark:hover:text-teal-500 transition-colors font-bold">Documentation</a>
-            <a href="/download" className="hover:text-teal-600 dark:hover:text-teal-500 transition-colors font-bold">Downloads</a>
-            <a href="/privacy" className="hover:text-teal-600 dark:hover:text-teal-500 transition-colors font-bold">Privacy Policy</a>
-            <p className="pt-6 opacity-60 text-xs">&copy; {new Date().getFullYear()} Tree File Project. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer/>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -119,7 +118,6 @@ export const DocChat: React.FC<{ context: string }> = ({ context }) => {
   const quickReplies = [
     { text: "Fix macOS 'Damaged' error", icon: <ShieldAlert size={14} /> },
     { text: "Large file limits?", icon: <Zap size={14} /> },
-    { text: "Gemini API setup", icon: <Sparkles size={14} /> }
   ];
 
   useEffect(() => {
@@ -137,7 +135,11 @@ export const DocChat: React.FC<{ context: string }> = ({ context }) => {
     setIsTyping(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      // FIX 1: Use VITE variable
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) throw new Error("API Key not found");
+
+      const ai = new GoogleGenAI({ apiKey });
       const prompt = `
         You are the "Tree File" Documentation Expert. 
         CONTEXT: ${context}
@@ -146,15 +148,18 @@ export const DocChat: React.FC<{ context: string }> = ({ context }) => {
       `;
 
       const result = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        // FIX 2: Use stable model
+        model: 'gemini-1.5-flash',
         contents: prompt,
       });
 
-      setMessages(prev => [...prev, { role: 'assistant', content: result.text || "No response." }]);
+      const responseText = result.text || "No response.";
+      setMessages(prev => [...prev, { role: 'assistant', content: responseText }]);
     } catch (error) {
+      console.error(error);
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: "Error: Failed to reach AI engine. Check connection.",
+        content: "Error: Failed to reach AI engine. Check connection or API Key.",
         isError: true 
       }]);
     } finally {
@@ -293,8 +298,8 @@ export const DocChat: React.FC<{ context: string }> = ({ context }) => {
           <motion.button
             key="toggle-button"
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 100 }}
             whileHover={{ scale: 1.1, rotate: 5, y: -4 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
