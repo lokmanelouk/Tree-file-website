@@ -10,14 +10,15 @@ interface TooltipProps {
 export const Tooltip: React.FC<TooltipProps> = ({ children, content, side = 'top' }) => {
   const [isVisible, setIsVisible] = useState(false);
 
-  // Core positioning styles
+  // Position containers using Flexbox instead of translate to avoid Framer conflicts
   const positionStyles: Record<string, string> = {
-    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2.5',
-    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2.5',
-    left: 'right-full top-1/2 -translate-y-1/2 mr-2.5',
-    right: 'left-full top-1/2 -translate-y-1/2 ml-2.5',
+    top: 'bottom-full left-0 right-0 flex justify-center mb-2.5',
+    bottom: 'top-full left-0 right-0 flex justify-center mt-2.5',
+    left: 'right-full top-0 bottom-0 flex items-center justify-end mr-2.5',
+    right: 'left-full top-0 bottom-0 flex items-center justify-start ml-2.5',
   };
 
+  // Arrow positioning (standard absolute)
   const arrowStyles: Record<string, string> = {
     top: 'top-full left-1/2 -translate-x-1/2 border-x-[5px] border-x-transparent border-t-[5px] border-t-white/80 dark:border-t-slate-800/90',
     bottom: 'bottom-full left-1/2 -translate-x-1/2 border-x-[5px] border-x-transparent border-b-[5px] border-b-white/80 dark:border-b-slate-800/90',
@@ -25,11 +26,10 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content, side = 'top
     right: 'right-full top-1/2 -translate-y-1/2 border-y-[5px] border-y-transparent border-r-[5px] border-r-white/80 dark:border-r-slate-800/90',
   };
 
-  // Animation variants that respect the initial centering transform
   const variants = {
     initial: { 
       opacity: 0, 
-      scale: 0.96,
+      scale: 0.95,
       y: side === 'top' ? 4 : (side === 'bottom' ? -4 : 0),
       x: side === 'left' ? 4 : (side === 'right' ? -4 : 0),
     },
@@ -41,9 +41,9 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content, side = 'top
     },
     exit: { 
       opacity: 0, 
-      scale: 0.96,
-      y: side === 'top' ? 4 : (side === 'bottom' ? -4 : 0),
-      x: side === 'left' ? 4 : (side === 'right' ? -4 : 0),
+      scale: 0.95,
+      y: side === 'top' ? 2 : (side === 'bottom' ? -2 : 0),
+      x: side === 'left' ? 2 : (side === 'right' ? -2 : 0),
     }
   };
 
@@ -58,19 +58,21 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content, side = 'top
       {children}
       <AnimatePresence>
         {isVisible && (
-          <motion.div
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={variants}
-            transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
-            className={`absolute ${positionStyles[side]} z-[500] pointer-events-none whitespace-nowrap`}
-          >
-            <div className="relative px-2.5 py-1.5 bg-white/80 dark:bg-slate-800/90 backdrop-blur-md text-slate-900 dark:text-slate-100 text-[11px] font-bold rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] border border-slate-200/50 dark:border-white/10 tracking-tight">
-              {content}
-              <div className={`absolute ${arrowStyles[side]}`} />
-            </div>
-          </motion.div>
+          <div className={`absolute ${positionStyles[side]} z-[500] pointer-events-none`}>
+            <motion.div
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={variants}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="whitespace-nowrap"
+            >
+              <div className="relative px-2.5 py-1.5 bg-white/90 dark:bg-slate-800/95 backdrop-blur-md text-slate-900 dark:text-slate-100 text-[11px] font-bold rounded-lg shadow-xl border border-slate-200/50 dark:border-white/10 tracking-tight">
+                {content}
+                <div className={`absolute ${arrowStyles[side]}`} />
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

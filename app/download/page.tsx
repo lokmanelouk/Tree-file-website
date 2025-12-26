@@ -57,7 +57,7 @@ const downloads: DownloadItem[] = [
   
   // --- MAC (Latest) ---
   { 
-    id: 'mac-univ-1.2.1', 
+    id: 'mac-univ-1.2.0', 
     platform: 'macOS', 
     arch: 'Universal', 
     version: '1.2.0', 

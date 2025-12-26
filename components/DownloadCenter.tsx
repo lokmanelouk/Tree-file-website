@@ -6,8 +6,8 @@ import { Tooltip } from './Tooltip';
 export const DownloadCenter: React.FC = () => {
   const versions = [
     {
-      version: "1.2.1",
-      date: "Latest Stable (July 2024)",
+      version: "1.2.0",
+      date: "Latest Stable (december 2025)",
       platforms: [
         { name: "Windows", ext: ".exe", link: "#", icon: <Laptop size={18} />, checksum: "sha256: 4f8a...92b1" },
         { name: "macOS", ext: ".dmg", link: "#", icon: <Apple size={18} />, checksum: "sha256: 1d2c...f4e8" },

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Laptop, Apple, ArrowRight, ChevronDown, ChevronRight } from 'lucide-react';
+import { Laptop, Apple, ArrowRight, ChevronDown, ChevronRight, Github } from 'lucide-react';
 import { HeroBackground } from './HeroBackground';
 
 export const Hero: React.FC = () => {
@@ -18,7 +18,7 @@ export const Hero: React.FC = () => {
           className="relative z-10 text-center lg:text-left pt-10"
         >
           <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-slate-100 dark:bg-teal-500/10 border border-slate-200 dark:border-teal-500/20 text-slate-600 dark:text-teal-400 text-[10px] font-black uppercase tracking-[0.2em] mb-10 backdrop-blur-sm">
-            ✨ Version 1.2.1 Now Available
+            ✨ Version 1.2.0 Now Available
           </div>
           <h1 className="text-4xl md:text-6xl lg:text-[5.2rem] font-black text-slate-900 dark:text-white leading-[1.1] mb-8 tracking-tight">
             The Modern Data Viewer for <br className="hidden xl:block" /> 
@@ -47,7 +47,7 @@ export const Hero: React.FC = () => {
               whileTap={{ scale: 0.98 }}
               className="w-full sm:w-auto px-10 py-5 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white rounded-2xl font-black text-lg border-2 border-slate-200 dark:border-slate-800 hover:border-teal-500/50 flex items-center justify-center gap-3 transition-all shadow-sm dark:shadow-none"
             >
-              <Apple size={24} />
+              <Github size={24} />
               Star on GitHub
             </motion.a>
           </div>

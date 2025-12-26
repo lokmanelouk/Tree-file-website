@@ -14,7 +14,7 @@ export const AIDemo: React.FC = () => {
   "user": "alex_dev",
   "permissions": ["read", "write"],
   "projects": [
-    {"name": "TreeFile", "version": "1.2.1", "status": "stable"},
+    {"name": "TreeFile", "version": "1.2.0", "status": "stable"},
     {"name": "DataParser", "version": "0.8.0", "status": "beta"}
   ],
   "usage": { "cpu": "12%", "memory": "256MB" }

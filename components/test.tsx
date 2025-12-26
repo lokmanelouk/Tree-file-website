@@ -1,332 +1,208 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  X, 
-  Send, 
-  Bot, 
-  User, 
-  Loader2, 
-  Codesandbox, 
-  Sparkles, 
-  AlertCircle,
-  MessageCircleQuestion,
-  Terminal,
-  Copy,
-  Check,
-  Zap,
-  ShieldAlert,
-  ArrowRight
-} from 'lucide-react';
-import { GoogleGenAI } from '@google/genai';
+  return (
+    /* 1. Change main bg to slate-50 in light mode for depth */
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white transition-colors duration-500">
+      <Navbar />
+      
+      <main className="relative pt-20">
+        <HeroBackground />
+        
+        {/* --- 2. Enhanced Filter Bar: Added stronger shadow and better border --- */}
+        <section className="sticky top-16 z-40 w-full bg-white/95 dark:bg-slate-950/90 backdrop-blur-2xl border-b border-slate-200 dark:border-white/5 py-4 px-6 md:px-12 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none transition-all">
+          <div className="max-w-7xl mx-auto flex flex-col xl:flex-row items-center gap-4">
+            
+            <div className="flex items-center gap-3 w-full xl:w-auto">
+              <Tooltip content="Back to Home" side="bottom">
+                <a 
+                  href="/" 
+                  className="flex items-center justify-center w-11 h-11 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 hover:bg-teal-600 dark:hover:bg-teal-400 transition-all shrink-0 shadow-md active:scale-95 group"
+                >
+                  <ArrowLeft size={20} strokeWidth={3} className="group-hover:-translate-x-0.5 transition-transform" />
+                </a>
+              </Tooltip>
 
-interface Message {
-  role: 'user' | 'assistant';
-  content: string;
-  isError?: boolean;
+              {/* Filter Pills */}
+              <div className="flex items-center gap-1 p-1 bg-slate-200/50 dark:bg-white/5 rounded-2xl border border-slate-200 dark:border-white/5 flex-grow sm:flex-grow-0">
+                {(['All', 'Windows', 'macOS', 'Linux'] as const).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setPlatformFilter(p)}
+                    className={`px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
+                      platformFilter === p 
+                        ? 'bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 shadow-sm border border-slate-200 dark:border-white/10' 
+                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="hidden xl:block w-px h-8 bg-slate-200 dark:bg-white/10 mx-2" />
+
+            <div className="grid grid-cols-2 lg:flex items-center gap-3 w-full xl:w-auto">
+              <CustomDropdown 
+                label="All Versions" 
+                options={uniqueVersions} 
+                value={versionFilter} 
+                onChange={setVersionFilter} 
+                icon={Filter} 
+              />
+              <CustomDropdown 
+                label="All Channels" 
+                options={['All', 'Stable', 'Beta', 'LTS']} 
+                value={typeFilter} 
+                onChange={setTypeFilter} 
+                icon={Layers} 
+              />
+            </div>
+
+            {/* Search Input: Better contrast in light mode */}
+            <div className="relative w-full xl:flex-grow">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input 
+                type="text" 
+                placeholder="Search architecture..."
+                className="w-full pl-12 pr-4 py-3 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-transparent focus:border-teal-500 focus:bg-white dark:focus:bg-slate-900 rounded-2xl text-[12px] font-black uppercase tracking-widest outline-none transition-all placeholder:text-slate-400 shadow-sm"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* --- 3. Grid: Added padding and spacing --- */}
+        <section className="py-20 px-6 md:px-12 max-w-7xl mx-auto min-h-[600px]">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
+            <div>
+              <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Available Installers</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Choose the build optimized for your architecture.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <AnimatePresence mode="popLayout">
+              {filteredDownloads.map((dl) => (
+                <DownloadCard 
+                  key={dl.id} 
+                  dl={dl} 
+                  isRecommended={dl.platform === detectedOS && dl.type === 'Stable'} 
+                />
+              ))}
+            </AnimatePresence>
+          </div>
+          {/* ... empty state logic ... */}
+        </section>
+
+        {/* --- 4. Support Section: Darker contrast for separation --- */}
+        <section className="py-32 px-6 md:px-12 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-white/5 shadow-inner">
+           {/* ... Installation Support Content ... */}
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
 }
 
-const CodeBlock = ({ code }: { code: string }) => {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+function DownloadCard({ dl, isRecommended }: { dl: DownloadItem, isRecommended: boolean }) {
+  // Brand color logic for better variety
+  const getBrandColors = () => {
+    if (dl.platform === 'Windows') return 'text-blue-600 bg-blue-50 dark:bg-blue-500/10';
+    if (dl.platform === 'macOS') return 'text-slate-900 bg-slate-100 dark:bg-white/10';
+    if (dl.platform === 'Linux') return 'text-orange-600 bg-orange-50 dark:bg-orange-500/10';
+    return 'text-teal-600 bg-teal-50';
   };
 
   return (
-    <div className="relative group/code my-4">
-      <div className="absolute top-3 left-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 pointer-events-none">
-        <Terminal size={12} />
-        System Shell
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      whileHover={{ y: -8 }}
+      /* 5. Card: Added large shadow and white background to pop against slate-50 */
+      className={`group relative p-10 rounded-[3.5rem] bg-white dark:bg-slate-900 border transition-all duration-500 ${
+        isRecommended 
+          ? 'border-teal-500 shadow-[0_20px_50px_-12px_rgba(20,184,166,0.15)]' 
+          : 'border-slate-200 dark:border-white/5 shadow-[0_15px_35px_-12px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_45px_-12px_rgba(0,0,0,0.1)]'
+      }`}
+    >
+      {isRecommended && (
+        <div className="absolute -top-4 left-10 bg-teal-500 text-slate-950 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
+          <Star size={12} fill="currentColor" />
+          Recommended Build
+        </div>
+      )}
+
+      <div className="flex justify-between items-start mb-10">
+        {/* 6. Dynamic Tints: Use the brand colors helper */}
+        <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm ${
+          isRecommended ? 'bg-teal-500 text-slate-950' : getBrandColors()
+        }`}>
+          {dl.platform === 'Windows' && <Laptop size={32} />}
+          {dl.platform === 'macOS' && <Apple size={32} />}
+          {dl.platform === 'Linux' && <Monitor size={32} />}
+        </div>
+        
+        <div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+          dl.type === 'Stable' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 border-emerald-100 dark:border-transparent' : 
+          dl.type === 'Beta' ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 border-amber-100 dark:border-transparent' : 
+          'bg-slate-50 dark:bg-slate-500/10 text-slate-500 border-slate-100 dark:border-transparent'
+        }`}>
+          {dl.type}
+        </div>
       </div>
-      <button 
-        onClick={handleCopy}
-        className="absolute top-2 right-2 p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 transition-colors"
-      >
-        {copied ? <Check size={14} className="text-teal-500" /> : <Copy size={14} />}
-      </button>
-      <pre className="bg-slate-950 text-emerald-400 p-10 pt-12 rounded-2xl font-mono text-xs overflow-x-auto shadow-inner border border-white/5">
-        {code}
-      </pre>
-    </div>
-  );
-};
 
-const MarkdownContent = ({ content }: { content: string }) => {
-  const parts = content.split(/(```[\s\S]*?```)/);
-  
-  return (
-    <div className="space-y-3">
-      {parts.map((part, i) => {
-        if (part.startsWith('```')) {
-          const code = part.replace(/```/g, '').trim();
-          return <CodeBlock key={i} code={code} />;
-        }
+      <div className="mb-10">
+        <h3 className="text-3xl font-black text-slate-900 dark:text-white leading-tight mb-2">
+          {dl.platform} <span className="text-slate-400 font-bold ml-1">{dl.arch}</span>
+        </h3>
+        <p className="text-[13px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-2">
+          <span className="text-teal-600 dark:text-teal-400">v{dl.version}</span>
+          <span className="w-1.5 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full" />
+          {dl.releaseDate}
+        </p>
+      </div>
 
-        const lines = part.split('\n');
-        return (
-          <div key={i} className="space-y-2">
-            {lines.map((line, lIdx) => {
-              if (line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
-                return (
-                  <div key={lIdx} className="flex gap-2 pl-1 items-start">
-                    <span className="text-teal-500 font-black mt-1.5 shrink-0">•</span>
-                    <span className="leading-relaxed">{line.trim().substring(2)}</span>
-                  </div>
-                );
-              }
-              if (/^\d+\./.test(line.trim())) {
-                return (
-                  <div key={lIdx} className="flex gap-2 pl-1 items-start">
-                    <span className="text-teal-500 font-mono font-black mt-0.5 shrink-0">{line.trim().split('.')[0]}.</span>
-                    <span className="leading-relaxed">{line.trim().split('.').slice(1).join('.')}</span>
-                  </div>
-                );
-              }
-              const inlineParts = line.split(/(`[^`]+`)/);
-              return (
-                <p key={lIdx} className="leading-relaxed">
-                  {inlineParts.map((ip, pIdx) => {
-                    if (ip.startsWith('`') && ip.endsWith('`')) {
-                      return (
-                        <code key={pIdx} className="bg-slate-950/20 dark:bg-slate-950 px-1.5 py-0.5 rounded font-mono text-xs text-teal-600 dark:text-teal-400 font-black mx-0.5">
-                          {ip.slice(1, -1)}
-                        </code>
-                      );
-                    }
-                    return ip;
-                  })}
-                </p>
-              );
-            })}
+      {/* Stats Section with better separation */}
+      <div className="grid grid-cols-2 gap-6 mb-10 p-5 bg-slate-50 dark:bg-white/5 rounded-[2rem]">
+        <div className="space-y-1">
+          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Format</span>
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
+            <FileCode size={14} className="text-teal-500" />
+            {dl.ext}
           </div>
-        );
-      })}
-    </div>
+        </div>
+        <div className="space-y-1">
+          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Size</span>
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
+            <Cpu size={14} className="text-teal-500" />
+            {dl.size}
+          </div>
+        </div>
+      </div>
+
+      <a 
+        href={dl.downloadUrl}
+        className={`w-full py-5 rounded-[1.5rem] font-black text-base flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-lg ${
+          isRecommended 
+            ? 'bg-teal-500 text-slate-950 hover:bg-teal-400 shadow-teal-500/20' 
+            : 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 hover:bg-teal-600 dark:hover:bg-teal-400 hover:text-white dark:hover:text-slate-950'
+        }`}
+      >
+        <Download size={20} strokeWidth={3} />
+        DOWNLOAD {dl.ext.toUpperCase()}
+      </a>
+      
+      {/* Footer Info */}
+      <div className="mt-8 pt-6 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-[10px] text-slate-400">
+        <div className="flex items-center gap-1.5 font-mono text-[9px] opacity-80">
+          <ShieldCheck size={14} className="text-emerald-500" />
+          {dl.checksum.split(': ')[1]}
+        </div>
+        <span className="font-black uppercase tracking-widest opacity-40">Verified</span>
+      </div>
+    </motion.div>
   );
-};
-
-export const DocChat: React.FC<{ context: string }> = ({ context }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: "Hi! I'm the Tree File documentation expert. Ask me about file limits, formatting, or security troubleshooting!" }
-  ]);
-  const [isTyping, setIsTyping] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const quickReplies = [
-    { text: "Fix macOS 'Damaged' error", icon: <ShieldAlert size={14} /> },
-    { text: "Large file limits?", icon: <Zap size={14} /> },
-    { text: "Gemini API setup", icon: <Sparkles size={14} /> }
-  ];
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages, isTyping]);
-
-  const streamText = async (fullText: string) => {
-    let currentText = '';
-    const words = fullText.split(' ');
-    
-    // Create an empty assistant message first
-    setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
-
-    for (let i = 0; i < words.length; i++) {
-      currentText += (i === 0 ? '' : ' ') + words[i];
-      
-      // Batch updates to make it look smooth but not too fast/jittery
-      setMessages(prev => {
-        const newMessages = [...prev];
-        newMessages[newMessages.length - 1].content = currentText;
-        return newMessages;
-      });
-      
-      // Delay to simulate writing speed
-      await new Promise(resolve => setTimeout(resolve, 30 + Math.random() * 20));
-    }
-  };
-
-  const handleSend = async (customMessage?: string) => {
-    const textToSend = customMessage || input;
-    if (!textToSend.trim() || isTyping) return;
-
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: textToSend }]);
-    setIsTyping(true);
-
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const prompt = `
-        You are the "Tree File" Documentation Expert. 
-        CONTEXT: ${context}
-        QUESTION: ${textToSend}
-        RULES: Use info from context. Be technical. Use markdown code blocks for terminal commands. Focus on file types, security fixes, and performance. Keep responses concise and professional.
-      `;
-
-      const result = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt,
-      });
-
-      const fullResponse = result.text || "I'm sorry, I couldn't generate a response.";
-      setIsTyping(false); // Stop loader before streaming
-      await streamText(fullResponse);
-      
-    } catch (error) {
-      setIsTyping(false);
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: "Error: Failed to reach AI engine. Check connection or verify your API key configuration.",
-        isError: true 
-      }]);
-    }
-  };
-
-  return (
-    <div className="fixed bottom-6 right-6 z-[200]">
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 30 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 30 }}
-            className="absolute bottom-0 right-0 w-[94vw] md:w-[450px] h-[650px] max-h-[85vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-[2.5rem] shadow-[0_32px_128px_-16px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden backdrop-blur-3xl"
-          >
-            {/* Header */}
-            <div className="px-6 py-5 border-b border-slate-100 dark:border-white/5 bg-slate-50/80 dark:bg-slate-800/50 flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-teal-500 flex items-center justify-center text-slate-950 shadow-lg shadow-teal-500/20">
-                  <Codesandbox size={22} strokeWidth={2.5} />
-                </div>
-                <div>
-                  <h3 className="text-sm font-black tracking-tight text-slate-900 dark:text-white">Expert Assistant</h3>
-                  <div className="flex items-center gap-1.5">
-                    <Sparkles size={10} className="text-teal-500 animate-pulse" />
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Doc Engine v1.2</span>
-                  </div>
-                </div>
-              </div>
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="p-2.5 rounded-xl bg-slate-200/50 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 transition-all text-slate-500 hover:text-slate-900 dark:hover:text-white"
-              >
-                <X size={20} strokeWidth={3} />
-              </button>
-            </div>
-
-            {/* Chat Messages */}
-            <div 
-              ref={scrollRef}
-              className="flex-grow overflow-y-auto p-6 space-y-6 scroll-smooth scrollbar-thin scrollbar-thumb-teal-500/10 hover:scrollbar-thumb-teal-500/30 scrollbar-track-transparent"
-            >
-              {messages.map((msg, i) => (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  key={i} 
-                  className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
-                >
-                  <div className={`w-9 h-9 rounded-xl shrink-0 flex items-center justify-center ${
-                    msg.role === 'assistant' 
-                      ? (msg.isError ? 'bg-rose-500/10 text-rose-500' : 'bg-teal-500/10 text-teal-500') 
-                      : 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-md'
-                  }`}>
-                    {msg.role === 'assistant' ? (msg.isError ? <AlertCircle size={18} /> : <Bot size={18} />) : <User size={18} />}
-                  </div>
-                  <div className={`max-w-[88%] p-4 rounded-2xl text-[13px] leading-relaxed shadow-sm ${
-                    msg.role === 'assistant' 
-                      ? (msg.isError ? 'bg-rose-500/5 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/20' : 'bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-white/5') 
-                      : 'bg-teal-500 text-slate-950 font-black'
-                  }`}>
-                    <MarkdownContent content={msg.content} />
-                  </div>
-                </motion.div>
-              ))}
-              
-              {isTyping && (
-                <div className="flex gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-teal-500/10 text-teal-500 flex items-center justify-center"><Loader2 size={18} className="animate-spin" /></div>
-                  <div className="bg-slate-50 dark:bg-white/5 p-4 rounded-2xl border border-slate-100 dark:border-white/5 flex gap-1.5 items-center">
-                    <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 rounded-full bg-teal-500" />
-                    <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-teal-500" />
-                    <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 rounded-full bg-teal-500" />
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Contextual Quick Replies */}
-            <AnimatePresence>
-              {!isTyping && messages.length < 5 && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="px-6 py-3 flex flex-wrap gap-2 shrink-0 overflow-x-auto no-scrollbar"
-                >
-                  {quickReplies.map((qr, i) => (
-                    <button
-                      key={i}
-                      onClick={() => handleSend(qr.text)}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:border-teal-500/50 hover:text-teal-500 transition-all whitespace-nowrap active:scale-95 shadow-sm"
-                    >
-                      {qr.icon}
-                      {qr.text}
-                      <ArrowRight size={10} className="opacity-40" />
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Input Area */}
-            <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-white/5 shrink-0">
-              <div className="relative flex items-center bg-slate-100 dark:bg-slate-950 rounded-2xl border border-transparent focus-within:border-teal-500/50 focus-within:ring-4 focus-within:ring-teal-500/10 transition-all p-1.5">
-                <input 
-                  type="text" 
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                  placeholder="Ask about fixing macOS errors..."
-                  className="flex-grow bg-transparent px-4 py-2 text-sm outline-none placeholder:text-slate-400 dark:text-white font-medium"
-                />
-                <button 
-                  onClick={() => handleSend()}
-                  disabled={!input.trim() || isTyping}
-                  className={`p-3 rounded-xl transition-all shadow-lg active:scale-95 ${
-                    !input.trim() || isTyping ? 'bg-slate-200 dark:bg-slate-800 text-slate-400' : 'bg-teal-500 text-slate-950 hover:bg-teal-400'
-                  }`}
-                >
-                  {isTyping ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} strokeWidth={2.5} />}
-                </button>
-              </div>
-              <div className="flex items-center justify-center gap-2 mt-4 opacity-40">
-                <MessageCircleQuestion size={10} />
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                  AI Trained on Tree File Core Documentation
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {!isOpen && (
-          <motion.button
-            key="toggle-button"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            whileHover={{ scale: 1.1, rotate: 5, y: -4 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsOpen(true)}
-            className="w-16 h-16 rounded-[1.75rem] flex items-center justify-center shadow-[0_20px_50px_rgba(20,184,166,0.3)] transition-all duration-300 bg-teal-500 text-slate-950 hover:bg-teal-400"
-          >
-            <Codesandbox size={28} strokeWidth={2.5} />
-          </motion.button>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
+}

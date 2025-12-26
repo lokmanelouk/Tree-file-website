@@ -24,7 +24,7 @@ import { Tooltip } from '@/components/Tooltip';
 
 const releases = [
   {
-    version: "1.2.1",
+    version: "1.2.0",
     date: "July 15, 2024",
     tagline: "Performance & Platform Expansion",
     status: "Current",
