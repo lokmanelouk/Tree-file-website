@@ -40,7 +40,42 @@ interface DownloadItem {
 // 🛠️ CONFIGURATION: Your Real Download Links
 // ------------------------------------------------------------------
 const downloads: DownloadItem[] = [
-  // --- WINDOWS (Latest) ---
+  { 
+    id: 'win-1.3.1-beta', 
+    platform: 'Windows', 
+    arch: 'x64', 
+    version: '1.3.1-beta', 
+    size: '88 MB', 
+    ext: '.exe', 
+    type: 'Beta', 
+    releaseDate: '2025-01-06', 
+    checksum: 'sha256: Verified', 
+    downloadUrl: 'https://github.com/lokmanelouk/Tree-file/releases/download/v1.3.1-alpha/Tree.File.Setup.1.3.1.exe' 
+  },
+  { 
+    id: 'mac-1.3.1-beta', 
+    platform: 'macOS', 
+    arch: 'Universal', 
+    version: '1.3.1-beta', 
+    size: '95 MB', 
+    ext: '.dmg', 
+    type: 'Beta', 
+    releaseDate: '2025-01-06', 
+    checksum: 'sha256: Verified', 
+    downloadUrl: 'https://github.com/lokmanelouk/Tree-file/releases/download/v1.3.1-alpha/Tree.File-1.3.1-arm64.dmg' 
+  },
+  { 
+    id: 'linux-appimage-1.3.1-beta', 
+    platform: 'Linux', 
+    arch: 'x64', 
+    version: '1.3.1-beta', 
+    size: '85 MB', 
+    ext: '.AppImage', 
+    type: 'Beta', 
+    releaseDate: '2025-01-06', 
+    checksum: 'sha256: Verified', 
+    downloadUrl: 'https://github.com/lokmanelouk/Tree-file/releases/download/v1.3.1-alpha/Tree.File-1.3.1.AppImage' 
+  },
   { 
     id: 'win-x64-1.2.0', 
     platform: 'Windows', 
@@ -54,8 +89,6 @@ const downloads: DownloadItem[] = [
     // Standard Electron-Builder output name. Check your GitHub Release if it has spaces or dots.
     downloadUrl: 'https://github.com/lokmanelouk/Tree-file/releases/download/v1.2.0/Tree.File.Setup.1.2.0.exe' 
   },
-  
-  // --- MAC (Latest) ---
   { 
     id: 'mac-univ-1.2.0', 
     platform: 'macOS', 
@@ -68,8 +101,6 @@ const downloads: DownloadItem[] = [
     checksum: 'sha256: Verified',
     downloadUrl: 'https://github.com/lokmanelouk/Tree-file/releases/download/v1.2.0/Tree.File-1.2.0.dmg' 
   },
-
-  // --- OLD VERSIONS ---
   { 
     id: 'win-1.1.0', 
     platform: 'Windows', 
